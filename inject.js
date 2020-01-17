@@ -499,13 +499,15 @@
           v.currentTime += value;
         } else if (action === 'faster') {
           // Maximum playback speed in Chrome is set to 16:
-          // https://cs.chromium.org/chromium/src/third_party/blink/renderer/core/html/media/html_media_element.cc?gsn=kMinRate&l=166
-          var s = Math.min((v.playbackRate < 0.1 ? 0.0 : v.playbackRate) + value, 16);
+          // https://cs.chromium.org/chromium/src/media/blink/webmediaplayer_impl.cc?l=103
+          var s = Math.min( (v.playbackRate < 0.1 ? 0.0 : v.playbackRate) + tc.settings.speedStep, 16);
           v.playbackRate = Number(s.toFixed(2));
         } else if (action === 'slower') {
+          // Audio playback is cut at 0.05:
+          // https://cs.chromium.org/chromium/src/media/filters/audio_renderer_algorithm.cc?l=49
           // Video min rate is 0.0625:
-          // https://cs.chromium.org/chromium/src/third_party/blink/renderer/core/html/media/html_media_element.cc?gsn=kMinRate&l=165
-          var s = Math.max(v.playbackRate - value, 0.07);
+          // https://cs.chromium.org/chromium/src/media/blink/webmediaplayer_impl.cc?l=102
+          var s = Math.max(v.playbackRate - tc.settings.speedStep, 0.0625);
           v.playbackRate = Number(s.toFixed(2));
         } else if (action === 'reset') {
           resetSpeed(v, 1.0);
